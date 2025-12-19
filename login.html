@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Login - Private Diary</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1519681393784-d120267933ba');
+            background-size: cover;
+            background-position: center;
+            filter: blur(20px) brightness(0.7);
+            transform: scale(1.1);
+            z-index: 1;
+        }
+        
+        .login-container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+        }
+        
+        .login-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 50px 40px;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+            font-size: 32px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .logo i {
+            color: #9b59b6;
+            font-size: 36px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #9b59b6;
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 0 3px rgba(155, 89, 182, 0.2);
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 40px;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .password-toggle:hover {
+            color: white;
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(45deg, #9b59b6, #3498db);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-top: 10px;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(155, 89, 182, 0.4);
+        }
+        
+        .login-btn:active {
+            transform: translateY(0);
+        }
+        
+        .backup-option {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .backup-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        .backup-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .security-note {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+            text-align: center;
+            margin-top: 30px;
+            line-height: 1.5;
+        }
+        
+        .error-message {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid rgba(231, 76, 60, 0.4);
+            color: #ff6b6b;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .location-warning {
+            background: rgba(243, 156, 18, 0.2);
+            border: 1px solid rgba(243, 156, 18, 0.4);
+            color: #f1c40f;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 20px;
+            }
+            
+            .login-box {
+                padding: 40px 25px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="background-image"></div>
+    
+    <div class="login-container">
+        <div class="login-box">
+            <div class="logo">
+                <i class="fas fa-lock"></i>
+                PrivateDiary
+            </div>
+            
+            <div class="error-message" id="errorMessage">
+                Invalid credentials. Please try again.
+            </div>
+            
+            <div class="location-warning" id="locationWarning">
+                <i class="fas fa-exclamation-triangle"></i>
+                Location permission required for login
+            </div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" class="form-control" placeholder="Enter your username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="Enter your password" required>
+                    <span class="password-toggle" id="togglePassword">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+                
+                <button type="submit" class="login-btn" id="loginButton">
+                    <i class="fas fa-sign-in-alt"></i> Secure Login
+                </button>
+            </form>
+            
+            <div class="backup-option">
+                <button class="backup-btn" id="backupLoginBtn">
+                    <i class="fas fa-key"></i> Use Backup Password
+                </button>
+            </div>
+            
+            <div class="security-note">
+                <i class="fas fa-shield-alt"></i> This website requires location permission for security verification. Login will be blocked for 15 minutes if location is not shared.
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+            const errorMessage = document.getElementById('errorMessage');
+            const locationWarning = document.getElementById('locationWarning');
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+            const backupLoginBtn = document.getElementById('backupLoginBtn');
+            const loginButton = document.getElementById('loginButton');
+            
+            let isBackupMode = false;
+            
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+            });
+            
+            backupLoginBtn.addEventListener('click', function() {
+                isBackupMode = !isBackupMode;
+                if (isBackupMode) {
+                    document.getElementById('username').placeholder = "Enter backup username";
+                    document.getElementById('password').placeholder = "Enter backup password";
+                    this.innerHTML = '<i class="fas fa-times"></i> Switch to Normal Login';
+                    this.style.background = 'rgba(155, 89, 182, 0.2)';
+                    this.style.color = '#9b59b6';
+                } else {
+                    document.getElementById('username').placeholder = "Enter your username";
+                    document.getElementById('password').placeholder = "Enter your password";
+                    this.innerHTML = '<i class="fas fa-key"></i> Use Backup Password';
+                    this.style.background = 'transparent';
+                    this.style.color = 'rgba(255, 255, 255, 0.8)';
+                }
+            });
+            
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                loginButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+                loginButton.disabled = true;
+                
+                try {
+                    if (!navigator.geolocation) {
+                        showError('Geolocation is not supported by your browser');
+                        loginButton.innerHTML = '<i class="fas fa-sign-in-alt"></i> Secure Login';
+                        loginButton.disabled = false;
+                        return;
+                    }
+                    
+                    const position = await new Promise((resolve, reject) => {
+                        navigator.geolocation.getCurrentPosition(resolve, reject, {
+                            enableHighAccuracy: true,
+                            timeout: 10000,
+                            maximumAge: 0
+                        });
+                    });
+                    
+                    const credentialsValid = await validateCredentials(username, password, isBackupMode);
+                    
+                    if (credentialsValid) {
+                        const locationData = {
+                            lat: position.coords.latitude,
+                            lon: position.coords.longitude,
+                            accuracy: position.coords.accuracy,
+                            timestamp: new Date().toISOString()
+                        };
+                        
+                        localStorage.setItem('userToken', 'authenticated');
+                        localStorage.setItem('userLocation', JSON.stringify(locationData));
+                        localStorage.setItem('loginTime', new Date().toISOString());
+                        localStorage.setItem('isBackupLogin', isBackupMode.toString());
+                        
+                        if (isBackupMode) {
+                            localStorage.setItem('backupLoginUsed', 'true');
+                        }
+                        
+                        window.location.href = 'home.html';
+                    } else {
+                        showError('Invalid username or password');
+                        loginButton.innerHTML = '<i class="fas fa-sign-in-alt"></i> Secure Login';
+                        loginButton.disabled = false;
+                    }
+                } catch (error) {
+                    if (error.code === 1) {
+                        locationWarning.style.display = 'block';
+                        showError('Location permission denied. Website will shutdown for 15 minutes.');
+                        
+                        setTimeout(() => {
+                            document.body.innerHTML = `
+                                <div style="display: flex; justify-content: center; align-items: center; height: 100vh; background: black; color: white; flex-direction: column; text-align: center; padding: 20px;">
+                                    <h1 style="color: #e74c3c; margin-bottom: 20px;"><i class="fas fa-ban"></i> Access Blocked</h1>
+                                    <p style="font-size: 18px; margin-bottom: 30px;">Location permission required for security verification.</p>
+                                    <p style="opacity: 0.8;">Website will be available again in 15 minutes.</p>
+                                    <div style="margin-top: 40px; font-size: 14px; opacity: 0.6;">
+                                        <i class="fas fa-shield-alt"></i> Private Diary Security System
+                                    </div>
+                                </div>
+                            `;
+                            
+                            setTimeout(() => {
+                                window.location.href = 'index.html';
+                            }, 900000);
+                        }, 3000);
+                    } else {
+                        showError('Error: ' + error.message);
+                        loginButton.innerHTML = '<i class="fas fa-sign-in-alt"></i> Secure Login';
+                        loginButton.disabled = false;
+                    }
+                }
+            });
+            
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorMessage.style.display = 'block';
+                setTimeout(() => {
+                    errorMessage.style.display = 'none';
+                }, 5000);
+            }
+            
+            async function validateCredentials(username, password, isBackup) {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        const validCredentials = [
+                            { user: 'admin', pass: 'securepass123', backup: false },
+                            { user: 'ximanta', pass: 'diary2025', backup: false },
+                            { user: 'backup', pass: 'emergencyAccess!2025', backup: true }
+                        ];
+                        
+                        const found = validCredentials.find(cred => 
+                            cred.user === username && 
+                            cred.pass === password && 
+                            cred.backup === isBackup
+                        );
+                        
+                        resolve(!!found);
+                    }, 1000);
+                });
+            }
+            
+            window.addEventListener('beforeunload', function() {
+                if (localStorage.getItem('userToken')) {
+                    const loginTime = new Date(localStorage.getItem('loginTime'));
+                    const currentTime = new Date();
+                    const diffMinutes = (currentTime - loginTime) / (1000 * 60);
+                    
+                    if (diffMinutes < 1) {
+                        localStorage.removeItem('userToken');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

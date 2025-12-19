@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Diary - Secure Personal Journal</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #9b59b6;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--light);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 100px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo i {
+            color: var(--accent);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+        
+        .nav-links a:hover {
+            color: var(--accent);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .hero {
+            padding: 160px 0 80px;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #fff, #9b59b6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+        
+        .login-btn {
+            background: linear-gradient(45deg, var(--accent), var(--secondary));
+            color: white;
+            border: none;
+            padding: 16px 48px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 600;
+            box-shadow: 0 8px 25px rgba(155, 89, 182, 0.4);
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(155, 89, 182, 0.6);
+        }
+        
+        section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        h2 {
+            font-size: 36px;
+            margin-bottom: 30px;
+            color: white;
+        }
+        
+        h3 {
+            font-size: 24px;
+            margin: 25px 0 15px;
+            color: var(--accent);
+        }
+        
+        .faq-item {
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 25px;
+        }
+        
+        .developer-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .contact-method {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            transition: transform 0.3s;
+        }
+        
+        .contact-method:hover {
+            transform: translateX(10px);
+        }
+        
+        .contact-method i {
+            font-size: 24px;
+            color: var(--accent);
+        }
+        
+        .contact-method a {
+            color: white;
+            text-decoration: none;
+        }
+        
+        .contact-method a:hover {
+            color: var(--accent);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            margin-top: 60px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            section {
+                padding: 30px 20px;
+            }
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 15px;
+            transition: transform 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .feature-card i {
+            font-size: 40px;
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <a href="#" class="logo">
+                <i class="fas fa-lock"></i>
+                PrivateDiary
+            </a>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#faq">FAQ</a>
+                <a href="#developer">Developer</a>
+                <a href="#" onclick="window.location.href='login.html'">Login</a>
+            </div>
+        </nav>
+    </header>
+    
+    <main class="container">
+        <section class="hero">
+            <h1>Your Personal Secure Diary</h1>
+            <p>A completely private journaling platform with military-grade security, location tracking, and real-time notifications. Your thoughts are safe with us.</p>
+            <a href="login.html" class="login-btn">
+                <i class="fas fa-sign-in-alt"></i> Secure Login
+            </a>
+        </section>
+        
+        <section id="features">
+            <h2>Why Choose Our Diary?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Military Security</h3>
+                    <p>Advanced encryption and location-based authentication to keep your diary truly private.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-bell"></i>
+                    <h3>Smart Reminders</h3>
+                    <p>Get notified daily at 10:00 PM (Assam time) to maintain your journaling habit.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h3>Location Protection</h3>
+                    <p>Automatic logout and blocking if location permissions are not granted for security.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-robot"></i>
+                    <h3>Telegram Integration</h3>
+                    <p>Full control via Telegram bot with admin privileges and real-time alerts.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="faq">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-item">
+                <h3>How secure is my diary?</h3>
+                <p>Your diary uses end-to-end encryption, location verification, and two-factor authentication. Even we cannot read your entries.</p>
+            </div>
+            <div class="faq-item">
+                <h3>What happens if someone else logs into my account?</h3>
+                <p>The system immediately requests location permission. If denied, it automatically logs out the device and blocks access for 15 minutes while alerting you via Telegram.</p>
+            </div>
+            <div class="faq-item">
+                <h3>Can I access my diary from multiple devices?</h3>
+                <p>Yes, but each device is tracked by IP and device info. You can view and manage all active devices from the Account Activity page.</p>
+            </div>
+            <div class="faq-item">
+                <h3>What happens at 10:00 PM every night?</h3>
+                <p>You'll receive a notification through the website and Telegram to remind you to write your daily journal entry.</p>
+            </div>
+        </section>
+        
+        <section id="developer">
+            <h2>About The Developer</h2>
+            <p>Ximanta is a security-focused developer passionate about creating privacy-respecting applications. With expertise in full-stack development and cybersecurity, this platform represents a commitment to digital privacy in an increasingly surveilled world.</p>
+            
+            <div class="developer-info">
+                <div class="contact-method">
+                    <i class="fab fa-github"></i>
+                    <div>
+                        <strong>GitHub</strong><br>
+                        <a href="https://github.com/tukuexe" target="_blank">tukuexe</a> | 
+                        <a href="https://github.com/dev-xmn" target="_blank">dev-xmn</a>
+                    </div>
+                </div>
+                <div class="contact-method">
+                    <i class="fab fa-instagram"></i>
+                    <div>
+                        <strong>Instagram</strong><br>
+                        <a href="https://instagram.com/ximanta_" target="_blank">@ximanta_</a>
+                    </div>
+                </div>
+                <div class="contact-method">
+                    <i class="fas fa-envelope"></i>
+                    <div>
+                        <strong>Email</strong><br>
+                        <a href="mailto:dev-xmn@outlook.com">dev-xmn@outlook.com</a>
+                    </div>
+                </div>
+                <div class="contact-method">
+                    <i class="fab fa-whatsapp"></i>
+                    <div>
+                        <strong>WhatsApp</strong><br>
+                        <a href="https://wa.me/+917577809114" target="_blank">+91 75778 09114</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="container">
+        <p>All rights reserved, ©2025-2026 December last</p>
+        <p style="margin-top: 10px; font-size: 12px;">This website automatically shuts down for 15 minutes if location permissions are not granted for security verification.</p>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginBtn = document.querySelector('.login-btn');
+            loginBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'login.html';
+            });
+            
+            const navLinks = document.querySelectorAll('.nav-links a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    if(this.getAttribute('href') === '#') {
+                        e.preventDefault();
+                        window.location.href = 'login.html';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

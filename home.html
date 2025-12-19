@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Diary - Private Diary</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #9b59b6;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --sidebar-width: 300px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        
+        body {
+            background: #f5f7fa;
+            color: #333;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar-header {
+            padding: 25px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+        }
+        
+        .sidebar-header h2 {
+            font-size: 22px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sidebar-header p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .nav-links {
+            flex: 1;
+            padding: 20px 0;
+        }
+        
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 25px;
+            color: #555;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+        
+        .nav-links a:hover {
+            background: #f8f9fa;
+            color: var(--accent);
+        }
+        
+        .nav-links a.active {
+            background: #f8f9fa;
+            color: var(--accent);
+            border-left-color: var(--accent);
+        }
+        
+        .nav-links i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            color: var(--primary);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .add-entry-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--accent), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(155, 89, 182, 0.4);
+            transition: transform 0.3s, box-shadow 0.3s;
+            z-index: 1000;
+            border: none;
+        }
+        
+        .add-entry-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(155, 89, 182, 0.6);
+        }
+        
+        .diary-entries {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        
+        .entry-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            border: 1px solid #eee;
+        }
+        
+        .entry-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .entry-date {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .entry-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
+        .entry-content {
+            color: #555;
+            line-height: 1.6;
+            font-size: 14px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .editor-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+        
+        .editor-container {
+            background: white;
+            width: 90%;
+            max-width: 900px;
+            height: 90vh;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+        
+        .editor-header {
+            padding: 20px 30px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .editor-header h3 {
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .editor-controls {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .control-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .editor-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+        }
+        
+        .title-input {
+            padding: 25px 30px;
+            border: none;
+            border-bottom: 1px solid #eee;
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .title-input:focus {
+            outline: none;
+        }
+        
+        .title-input::placeholder {
+            color: #aaa;
+        }
+        
+        .toolbar {
+            padding: 15px 30px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            background: #f8f9fa;
+        }
+        
+        .toolbar-btn {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .toolbar-btn:hover {
+            background: #f0f0f0;
+            border-color: #ccc;
+        }
+        
+        .toolbar-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        .font-select {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+        }
+        
+        .color-picker {
+            width: 40px;
+            height: 40px;
+            border: none;
+            cursor: pointer;
+            background: transparent;
+        }
+        
+        .editor-area {
+            flex: 1;
+            padding: 30px;
+            border: none;
+            font-size: 16px;
+            line-height: 1.8;
+            resize: none;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        .editor-area:focus {
+            outline: none;
+        }
+        
+        .editor-footer {
+            padding: 20px 30px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            background: #f8f9fa;
+        }
+        
+        .action-btn {
+            padding: 12px 30px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .publish-btn {
+            background: linear-gradient(135deg, var(--success), #2ecc71);
+            color: white;
+        }
+        
+        .publish-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(39, 174, 96, 0.3);
+        }
+        
+        .cancel-btn {
+            background: #eee;
+            color: #666;
+        }
+        
+        .cancel-btn:hover {
+            background: #ddd;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #888;
+        }
+        
+        .empty-state i {
+            font-size: 60px;
+            margin-bottom: 20px;
+            color: #ddd;
+        }
+        
+        .entry-tags {
+            display: flex;
+            gap: 8px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .tag {
+            background: #f0f0f0;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .notification-bell {
+            position: relative;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--primary);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger);
+            color: white;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .header h1 {
+                font-size: 22px;
+            }
+        }
+        
+        .tag-emoji {
+            margin-right: 5px;
+        }
+        
+        .format-preview {
+            font-size: 12px;
+            color: #888;
+            margin-top: 10px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-lock"></i> Private Diary</h2>
+            <p>Secure Personal Journal</p>
+        </div>
+        
+        <div class="nav-links">
+            <a href="#" class="active">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="account-activity.html">
+                <i class="fas fa-user-shield"></i> Account Activity
+            </a>
+            <a href="#">
+                <i class="fas fa-cog"></i> Settings
+            </a>
+            <a href="#">
+                <i class="fas fa-moon"></i> Dark Mode
+            </a>
+            <a href="#" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+        
+        <div class="sidebar-footer">
+            <p><i class="fas fa-shield-alt"></i> Location Protected</p>
+            <p style="margin-top: 5px; font-size: 11px;">Last sync: Just now</p>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div class="header">
+            <h1>My Diary Entries</h1>
+            <div class="user-info">
+                <div class="notification-bell">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">1</span>
+                </div>
+                <div class="user-avatar">X</div>
+            </div>
+        </div>
+        
+        <div class="diary-entries" id="diaryEntries">
+            <div class="empty-state" id="emptyState">
+                <i class="fas fa-book"></i>
+                <h3>No diary entries yet</h3>
+                <p>Start your first entry by clicking the + button</p>
+            </div>
+        </div>
+    </div>
+    
+    <button class="add-entry-btn" id="addEntryBtn">
+        <i class="fas fa-plus"></i>
+    </button>
+    
+    <div class="editor-overlay" id="editorOverlay">
+        <div class="editor-container">
+            <div class="editor-header">
+                <h3><i class="fas fa-edit"></i> New Diary Entry</h3>
+                <div class="editor-controls">
+                    <button class="control-btn" title="Auto-save">
+                        <i class="fas fa-save"></i>
+                    </button>
+                    <button class="control-btn" title="Close" id="closeEditorBtn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="editor-body">
+                <input type="text" class="title-input" id="entryTitle" placeholder="Entry Title">
+                
+                <div class="toolbar">
+                    <button class="toolbar-btn" data-command="bold" title="Bold">
+                        <i class="fas fa-bold"></i>
+                    </button>
+                    <button class="toolbar-btn" data-command="italic" title="Italic">
+                        <i class="fas fa-italic"></i>
+                    </button>
+                    <button class="toolbar-btn" data-command="underline" title="Underline">
+                        <i class="fas fa-underline"></i>
+                    </button>
+                    <select class="font-select" id="fontSelect">
+                        <option value="system">System Font</option>
+                        <option value="georgia">Georgia</option>
+                        <option value="cursive">Cursive</option>
+                        <option value="monospace">Monospace</option>
+                    </select>
+                    <input type="color" class="color-picker" id="colorPicker" value="#333333">
+                    <button class="toolbar-btn" id="addEmojiBtn" title="Add Emoji">
+                        <i class="far fa-smile"></i>
+                    </button>
+                    <button class="toolbar-btn" id="addTagBtn" title="Add Tag">
+                        <i class="fas fa-tag"></i> Tag
+                    </button>
+                </div>
+                
+                <div class="format-preview">
+                    Format: Use *text* for bold, _text_ for italic, ~text~ for underline
+                </div>
+                
+                <textarea class="editor-area" id="editorArea" placeholder="Start writing your thoughts..."></textarea>
+            </div>
+            
+            <div class="editor-footer">
+                <button class="action-btn cancel-btn" id="cancelEntryBtn">
+                    Cancel
+                </button>
+                <button class="action-btn publish-btn" id="publishEntryBtn">
+                    <i class="fas fa-paper-plane"></i> Publish Entry
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const addEntryBtn = document.getElementById('addEntryBtn');
+            const editorOverlay = document.getElementById('editorOverlay');
+            const closeEditorBtn = document.getElementById('closeEditorBtn');
+            const cancelEntryBtn = document.getElementById('cancelEntryBtn');
+            const publishEntryBtn = document.getElementById('publishEntryBtn');
+            const entryTitle = document.getElementById('entryTitle');
+            const editorArea = document.getElementById('editorArea');
+            const diaryEntries = document.getElementById('diaryEntries');
+            const emptyState = document.getElementById('emptyState');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const toolbarBtns = document.querySelectorAll('.toolbar-btn');
+            const fontSelect = document.getElementById('fontSelect');
+            const colorPicker = document.getElementById('colorPicker');
+            const addEmojiBtn = document.getElementById('addEmojiBtn');
+            const addTagBtn = document.getElementById('addTagBtn');
+            
+            let entries = JSON.parse(localStorage.getItem('diaryEntries')) || [];
+            let currentEntryId = null;
+            let isEditing = false;
+            
+            function checkAuth() {
+                const token = localStorage.getItem('userToken');
+                const loginTime = new Date(localStorage.getItem('loginTime'));
+                const currentTime = new Date();
+                const diffMinutes = (currentTime - loginTime) / (1000 * 60);
+                
+                if (!token || diffMinutes > 120) {
+                    localStorage.removeItem('userToken');
+                    window.location.href = 'login.html';
+                }
+            }
+            
+            checkAuth();
+            setInterval(checkAuth, 60000);
+            
+            function renderEntries() {
+                if (entries.length === 0) {
+                    emptyState.style.display = 'block';
+                    return;
+                }
+                
+                emptyState.style.display = 'none';
+                diaryEntries.innerHTML = '';
+                
+                entries.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(entry => {
+                    const entryCard = document.createElement('div');
+                    entryCard.className = 'entry-card';
+                    entryCard.dataset.id = entry.id;
+                    
+                    const formattedDate = new Date(entry.date).toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    let contentPreview = entry.content.replace(/<[^>]*>/g, '');
+                    contentPreview = contentPreview.length > 150 ? contentPreview.substring(0, 150) + '...' : contentPreview;
+                    
+                    entryCard.innerHTML = `
+                        <div class="entry-date">
+                            <i class="far fa-calendar"></i> ${formattedDate}
+                        </div>
+                        <div class="entry-title">${entry.title}</div>
+                        <div class="entry-content">${contentPreview}</div>
+                        ${entry.tags && entry.tags.length > 0 ? `
+                            <div class="entry-tags">
+                                ${entry.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                            </div>
+                        ` : ''}
+                    `;
+                    
+                    entryCard.addEventListener('click', () => {
+                        openEditorForEdit(entry.id);
+                    });
+                    
+                    diaryEntries.appendChild(entryCard);
+                });
+            }
+            
+            function openEditorForEdit(entryId) {
+                const entry = entries.find(e => e.id === entryId);
+                if (!entry) return;
+                
+                currentEntryId = entryId;
+                isEditing = true;
+                entryTitle.value = entry.title;
+                editorArea.value = entry.content;
+                
+                document.querySelector('.editor-header h3').innerHTML = `<i class="fas fa-edit"></i> Edit Diary Entry`;
+                editorOverlay.style.display = 'flex';
+            }
+            
+            function openEditorForNew() {
+                currentEntryId = null;
+                isEditing = false;
+                entryTitle.value = '';
+                editorArea.value = '';
+                
+                document.querySelector('.editor-header h3').innerHTML = `<i class="fas fa-edit"></i> New Diary Entry`;
+                editorOverlay.style.display = 'flex';
+                entryTitle.focus();
+            }
+            
+            function closeEditor() {
+                editorOverlay.style.display = 'none';
+                currentEntryId = null;
+                isEditing = false;
+            }
+            
+            function formatText(command) {
+                const start = editorArea.selectionStart;
+                const end = editorArea.selectionEnd;
+                const selectedText = editorArea.value.substring(start, end);
+                let formattedText = '';
+                
+                switch(command) {
+                    case 'bold':
+                        formattedText = `*${selectedText}*`;
+                        break;
+                    case 'italic':
+                        formattedText = `_${selectedText}_`;
+                        break;
+                    case 'underline':
+                        formattedText = `~${selectedText}~`;
+                        break;
+                    default:
+                        formattedText = selectedText;
+                }
+                
+                const beforeText = editorArea.value.substring(0, start);
+                const afterText = editorArea.value.substring(end);
+                
+                editorArea.value = beforeText + formattedText + afterText;
+                editorArea.focus();
+                editorArea.selectionStart = start + formattedText.length;
+                editorArea.selectionEnd = start + formattedText.length;
+            }
+            
+            function parseFormatting(text) {
+                let formattedText = text
+                    .replace(/\*([^*]+)\*/g, '<strong>$1</strong>')
+                    .replace(/_([^_]+)_/g, '<em>$1</em>')
+                    .replace(/~([^~]+)~/g, '<u>$1</u>')
+                    .replace(/\n/g, '<br>');
+                
+                return formattedText;
+            }
+            
+            function publishEntry() {
+                const title = entryTitle.value.trim();
+                const content = editorArea.value.trim();
+                
+                if (!title || !content) {
+                    alert('Please enter both title and content');
+                    return;
+                }
+                
+                const formattedContent = parseFormatting(content);
+                
+                if (isEditing && currentEntryId) {
+                    const entryIndex = entries.findIndex(e => e.id === currentEntryId);
+                    if (entryIndex !== -1) {
+                        entries[entryIndex] = {
+                            ...entries[entryIndex],
+                            title,
+                            content: formattedContent,
+                            date: new Date().toISOString()
+                        };
+                    }
+                } else {
+                    const newEntry = {
+                        id: Date.now().toString(),
+                        title,
+                        content: formattedContent,
+                        date: new Date().toISOString(),
+                        tags: ['Personal']
+                    };
+                    
+                    entries.unshift(newEntry);
+                }
+                
+                localStorage.setItem('diaryEntries', JSON.stringify(entries));
+                renderEntries();
+                closeEditor();
+                
+                sendNotificationToTelegram(title);
+            }
+            
+            async function sendNotificationToTelegram(title) {
+                const location = JSON.parse(localStorage.getItem('userLocation') || '{}');
+                
+                try {
+                    await fetch('https://api.telegram.org/botYOUR_BOT_TOKEN/sendMessage', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            chat_id: 'YOUR_CHAT_ID',
+                            text: `📝 New diary entry created: "${title}"\n📍 Location: ${location.lat ? `${location.lat}, ${location.lon}` : 'Unknown'}\n⏰ Time: ${new Date().toLocaleString()}`
+                        })
+                    });
+                } catch (error) {
+                    console.log('Telegram notification failed');
+                }
+            }
+            
+            addEntryBtn.addEventListener('click', openEditorForNew);
+            closeEditorBtn.addEventListener('click', closeEditor);
+            cancelEntryBtn.addEventListener('click', closeEditor);
+            
+            publishEntryBtn.addEventListener('click', publishEntry);
+            
+            toolbarBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const command = this.dataset.command;
+                    formatText(command);
+                    this.classList.toggle('active');
+                    setTimeout(() => this.classList.remove('active'), 300);
+                });
+            });
+            
+            fontSelect.addEventListener('change', function() {
+                switch(this.value) {
+                    case 'georgia':
+                        editorArea.style.fontFamily = 'Georgia, serif';
+                        break;
+                    case 'cursive':
+                        editorArea.style.fontFamily = 'cursive';
+                        break;
+                    case 'monospace':
+                        editorArea.style.fontFamily = 'monospace';
+                        break;
+                    default:
+                        editorArea.style.fontFamily = '-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';
+                }
+            });
+            
+            colorPicker.addEventListener('input', function() {
+                editorArea.style.color = this.value;
+            });
+            
+            addEmojiBtn.addEventListener('click', function() {
+                const emojis = ['😊', '😢', '😡', '🤔', '🎉', '❤️', '📚', '✍️', '🌙', '🌟'];
+                const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+                
+                const start = editorArea.selectionStart;
+                const beforeText = editorArea.value.substring(0, start);
+                const afterText = editorArea.value.substring(start);
+                
+                editorArea.value = beforeText + randomEmoji + afterText;
+                editorArea.focus();
+                editorArea.selectionStart = start + randomEmoji.length;
+                editorArea.selectionEnd = start + randomEmoji.length;
+            });
+            
+            addTagBtn.addEventListener('click', function() {
+                const tag = prompt('Enter a tag (Personal, Work, Ideas, Secret):', 'Personal');
+                if (tag) {
+                    const start = editorArea.selectionStart;
+                    const beforeText = editorArea.value.substring(0, start);
+                    const afterText = editorArea.value.substring(start);
+                    
+                    editorArea.value = beforeText + ` #${tag} ` + afterText;
+                    editorArea.focus();
+                    editorArea.selectionStart = start + tag.length + 3;
+                    editorArea.selectionEnd = start + tag.length + 3;
+                }
+            });
+            
+            logoutBtn.addEventListener('click', function() {
+                localStorage.removeItem('userToken');
+                localStorage.removeItem('userLocation');
+                window.location.href = 'login.html';
+            });
+            
+            editorArea.addEventListener('input', function() {
+                const text = this.value;
+                const words = text.split(/\s+/).length;
+                const chars = text.length;
+                
+                document.querySelector('.format-preview').innerHTML = 
+                    `Format: Use *text* for bold, _text_ for italic, ~text~ for underline | Words: ${words} | Characters: ${chars}`;
+            });
+            
+            setInterval(() => {
+                const now = new Date();
+                const assamTime = new Date(now.getTime() + (5.5 * 60 * 60 * 1000));
+                
+                if (assamTime.getHours() === 22 && assamTime.getMinutes() === 0) {
+                    showNotification();
+                }
+            }, 60000);
+            
+            function showNotification() {
+                if (Notification.permission === 'granted') {
+                    new Notification('Private Diary Reminder', {
+                        body: 'It\'s 10:00 PM in Assam. Time to write your daily journal entry!',
+                        icon: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
+                    });
+                }
+                
+                sendTelegramReminder();
+            }
+            
+            async function sendTelegramReminder() {
+                try {
+                    await fetch('https://api.telegram.org/botYOUR_BOT_TOKEN/sendMessage', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            chat_id: 'YOUR_CHAT_ID',
+                            text: '⏰ 10:00 PM Assam Time - Daily diary reminder! Time to write your journal entry.'
+                        })
+                    });
+                } catch (error) {
+                    console.log('Telegram reminder failed');
+                }
+            }
+            
+            if (Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+            
+            renderEntries();
+            
+            if (localStorage.getItem('backupLoginUsed') === 'true') {
+                alert('Security Alert: Backup password was used for login. Please change your main password.');
+            }
+        });
+    </script>
+</body>
+</html>

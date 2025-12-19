@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: privatediary-primary
+    env: node
+    buildCommand: npm install
+    startCommand: node backend1.js
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: MONGO_URI
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: BACKUP2_URL
+        value: http://localhost:3001
+    healthCheckPath: /api/health
+    autoDeploy: true
+
+  - type: web
+    name: privatediary-backup
+    env: node
+    buildCommand: npm install
+    startCommand: node backend2.js
+    envVars:
+      - key: PORT
+        value: 3001
+      - key: MONGO_URI
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: PRIMARY_URL
+        value: http://localhost:3000
+    healthCheckPath: /api/health
+    autoDeploy: true

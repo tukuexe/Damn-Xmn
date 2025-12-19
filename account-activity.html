@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Activity - Private Diary</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #9b59b6;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        
+        body {
+            background: #f5f7fa;
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .back-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: #1a252f;
+        }
+        
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+        
+        .stat-icon.login {
+            background: linear-gradient(135deg, var(--success), #2ecc71);
+        }
+        
+        .stat-icon.device {
+            background: linear-gradient(135deg, var(--secondary), #2980b9);
+        }
+        
+        .stat-icon.active {
+            background: linear-gradient(135deg, var(--accent), #8e44ad);
+        }
+        
+        .stat-icon.warning {
+            background: linear-gradient(135deg, var(--warning), #e67e22);
+        }
+        
+        .stat-info h3 {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stat-info .value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .activity-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 22px;
+            color: var(--primary);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .devices-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .device-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+            border-left: 4px solid var(--success);
+        }
+        
+        .device-card.suspicious {
+            border-left-color: var(--danger);
+            background: #ffeaea;
+        }
+        
+        .device-card.inactive {
+            border-left-color: #ccc;
+            opacity: 0.7;
+        }
+        
+        .device-info {
+            flex: 1;
+        }
+        
+        .device-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .device-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+        
+        .device-name {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 16px;
+        }
+        
+        .device-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 15px;
+        }
+        
+        .status-active {
+            background: #d5f4e6;
+            color: var(--success);
+        }
+        
+        .status-inactive {
+            background: #f0f0f0;
+            color: #888;
+        }
+        
+        .device-details {
+            display: flex;
+            gap: 25px;
+            margin-top: 8px;
+        }
+        
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .detail-item i {
+            color: var(--accent);
+            width: 16px;
+        }
+        
+        .device-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            background: white;
+            border: 1px solid #ddd;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #666;
+        }
+        
+        .action-btn:hover {
+            background: #f0f0f0;
+            border-color: #ccc;
+        }
+        
+        .action-btn.logout:hover {
+            background: #ffeaea;
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+        
+        .action-btn.delete:hover {
+            background: #ffeaea;
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+        
+        .dropdown-menu {
+            position: absolute;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 10px 0;
+            min-width: 180px;
+            z-index: 100;
+            display: none;
+        }
+        
+        .dropdown-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.3s;
+        }
+        
+        .dropdown-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .dropdown-item.logout {
+            color: var(--danger);
+        }
+        
+        .dropdown-item.delete {
+            color: var(--danger);
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal h3 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .modal p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+        }
+        
+        .modal-btn {
+            padding: 12px 30px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .modal-btn.confirm {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .modal-btn.confirm:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+        
+        .modal-btn.cancel {
+            background: #eee;
+            color: #666;
+        }
+        
+        .modal-btn.cancel:hover {
+            background: #ddd;
+        }
+        
+        .location-data {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+        
+        .location-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .location-map {
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .security-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+        
+        .security-btn {
+            background: white;
+            border: 2px solid #e0e0e0;
+            padding: 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .security-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .security-btn i {
+            font-size: 32px;
+            color: var(--accent);
+        }
+        
+        .security-btn span {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .security-btn.danger {
+            border-color: #ffeaea;
+        }
+        
+        .security-btn.danger:hover {
+            border-color: var(--danger);
+        }
+        
+        .security-btn.danger i {
+            color: var(--danger);
+        }
+        
+        @media (max-width: 768px) {
+            .device-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .device-actions {
+                align-self: flex-end;
+            }
+            
+            .device-details {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+        }
+        
+        .ip-address {
+            font-family: monospace;
+            background: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        
+        .time-ago {
+            color: #888;
+            font-size: 13px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <i class="fas fa-user-shield"></i>
+                Account Activity & Security
+            </h1>
+            <button class="back-btn" onclick="window.location.href='home.html'">
+                <i class="fas fa-arrow-left"></i> Back to Diary
+            </button>
+        </div>
+        
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-icon login">
+                    <i class="fas fa-sign-in-alt"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Total Logins</h3>
+                    <div class="value" id="totalLogins">12</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon device">
+                    <i class="fas fa-laptop"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Devices</h3>
+                    <div class="value" id="totalDevices">3</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon active">
+                    <i class="fas fa-wifi"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Active Now</h3>
+                    <div class="value" id="activeDevices">1</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Suspicious</h3>
+                    <div class="value" id="suspiciousActivities">0</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="activity-section">
+            <h2 class="section-title">
+                <i class="fas fa-laptop-house"></i>
+                Active Login Devices
+            </h2>
+            
+            <div class="devices-list" id="devicesList">
+                <!-- Devices will be loaded here -->
+            </div>
+        </div>
+        
+        <div class="activity-section">
+            <h2 class="section-title">
+                <i class="fas fa-history"></i>
+                Recent Login Activity
+            </h2>
+            
+            <div class="devices-list" id="loginHistory">
+                <!-- Login history will be loaded here -->
+            </div>
+        </div>
+        
+        <div class="activity-section">
+            <h2 class="section-title">
+                <i class="fas fa-map-marker-alt"></i>
+                Current Location Data
+            </h2>
+            
+            <div class="location-data">
+                <div class="location-header">
+                    <i class="fas fa-info-circle" style="color: var(--accent);"></i>
+                    <h3>Your login location has been recorded for security purposes</h3>
+                </div>
+                
+                <div class="device-details">
+                    <div class="detail-item">
+                        <i class="fas fa-map-pin"></i>
+                        <span>Coordinates: <span id="coordinates">Loading...</span></span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-crosshairs"></i>
+                        <span>Accuracy: <span id="accuracy">Loading...</span> meters</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-clock"></i>
+                        <span>Last Updated: <span id="locationTime">Just now</span></span>
+                    </div>
+                </div>
+                
+                <div class="location-map" id="locationMap">
+                    <i class="fas fa-map"></i> Location map would display here
+                </div>
+            </div>
+        </div>
+        
+        <div class="security-actions">
+            <div class="security-btn" onclick="forceLogoutAll()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout All Devices</span>
+                <small>Except this one</small>
+            </div>
+            
+            <div class="security-btn" onclick="changePassword()">
+                <i class="fas fa-key"></i>
+                <span>Change Password</span>
+                <small>Update login credentials</small>
+            </div>
+            
+            <div class="security-btn danger" onclick="emergencyLock()">
+                <i class="fas fa-ban"></i>
+                <span>Emergency Lock</span>
+                <small>Block all access for 15min</small>
+            </div>
+            
+            <div class="security-btn" onclick="viewTelegramLogs()">
+                <i class="fas fa-robot"></i>
+                <span>Telegram Bot Logs</span>
+                <small>View security alerts</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="logoutModal">
+        <div class="modal">
+            <h3><i class="fas fa-sign-out-alt"></i> Logout Device</h3>
+            <p>Are you sure you want to logout from <strong id="logoutDeviceName">this device</strong>? This will immediately terminate the session on that device.</p>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
+                <button class="modal-btn confirm" onclick="confirmLogout()">Confirm Logout</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal">
+            <h3><i class="fas fa-trash-alt"></i> Delete Device</h3>
+            <p>Are you sure you want to permanently remove <strong id="deleteDeviceName">this device</strong> from your login history? This action cannot be undone.</p>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
+                <button class="modal-btn confirm" onclick="confirmDelete()">Delete Permanently</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="blockModal">
+        <div class="modal">
+            <h3><i class="fas fa-ban"></i> Block IP Address</h3>
+            <p>Are you sure you want to block IP address <strong id="blockIpAddress">0.0.0.0</strong>? This IP will be prevented from accessing your account.</p>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
+                <button class="modal-btn confirm" onclick="confirmBlock()">Block IP</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let devices = JSON.parse(localStorage.getItem('loginDevices')) || [];
+            let loginHistory = JSON.parse(localStorage.getItem('loginHistory')) || [];
+            let currentAction = null;
+            let selectedDeviceId = null;
+            
+            const currentDeviceId = localStorage.getItem('currentDeviceId') || generateDeviceId();
+            
+            if (!localStorage.getItem('currentDeviceId')) {
+                localStorage.setItem('currentDeviceId', currentDeviceId);
+            }
+            
+            function checkAuth() {
+                const token = localStorage.getItem('userToken');
+                if (!token) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                const loginTime = new Date(localStorage.getItem('loginTime'));
+                const currentTime = new Date();
+                const diffMinutes = (currentTime - loginTime) / (1000 * 60);
+                
+                if (diffMinutes > 120) {
+                    localStorage.removeItem('userToken');
+                    window.location.href = 'login.html';
+                }
+            }
+            
+            checkAuth();
+            setInterval(checkAuth, 60000);
+            
+            function generateDeviceId() {
+                return 'device_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+            }
+            
+            function getDeviceInfo() {
+                const userAgent = navigator.userAgent;
+                let deviceName = 'Unknown Device';
+                let deviceType = 'desktop';
+                let browser = 'Unknown Browser';
+                
+                if (/mobile/i.test(userAgent)) {
+                    deviceType = 'mobile';
+                    if (/iphone|ipod|ipad/i.test(userAgent)) {
+                        deviceName = 'iPhone/iPad';
+                        browser = 'Safari';
+                    } else if (/android/i.test(userAgent)) {
+                        deviceName = 'Android Device';
+                        browser = 'Chrome';
+                    }
+                } else if (/mac/i.test(userAgent)) {
+                    deviceName = 'Mac Computer';
+                    browser = 'Safari';
+                } else if (/windows/i.test(userAgent)) {
+                    deviceName = 'Windows PC';
+                    browser = 'Chrome/Edge';
+                } else if (/linux/i.test(userAgent)) {
+                    deviceName = 'Linux Computer';
+                    browser = 'Firefox';
+                }
+                
+                if (/chrome/i.test(userAgent) && !/edge/i.test(userAgent)) {
+                    browser = 'Chrome';
+                } else if (/firefox/i.test(userAgent)) {
+                    browser = 'Firefox';
+                } else if (/safari/i.test(userAgent) && !/chrome/i.test(userAgent)) {
+                    browser = 'Safari';
+                } else if (/edge/i.test(userAgent)) {
+                    browser = 'Edge';
+                }
+                
+                return {
+                    id: currentDeviceId,
+                    name: deviceName,
+                    type: deviceType,
+                    browser: browser,
+                    ip: 'Detecting...',
+                    location: 'Loading...',
+                    lastActive: new Date().toISOString(),
+                    isCurrent: true,
+                    status: 'active'
+                };
+            }
+            
+            async function detectIP() {
+                try {
+                    const response = await fetch('https://api.ipify.org?format=json');
+                    const data = await response.json();
+                    return data.ip;
+                } catch (error) {
+                    return '192.168.1.1';
+                }
+            }
+            
+            function initializeData() {
+                const currentDevice = getDeviceInfo();
+                
+                if (devices.length === 0) {
+                    devices = [currentDevice];
+                } else {
+                    const existingIndex = devices.findIndex(d => d.id === currentDeviceId);
+                    if (existingIndex === -1) {
+                        devices.push(currentDevice);
+                    } else {
+                        devices[existingIndex].lastActive = new Date().toISOString();
+                        devices[existingIndex].status = 'active';
+                    }
+                }
+                
+                if (loginHistory.length === 0) {
+                    loginHistory = [{
+                        device: currentDevice.name,
+                        ip: '192.168.1.1',
+                        time: new Date().toISOString(),
+                        location: 'Assam, India',
+                        type: 'initial'
+                    }];
+                }
+                
+                localStorage.setItem('loginDevices', JSON.stringify(devices));
+                localStorage.setItem('loginHistory', JSON.stringify(loginHistory));
+                
+                updateStats();
+                renderDevices();
+                renderLoginHistory();
+                updateLocationData();
+            }
+            
+            function updateStats() {
+                const totalLogins = loginHistory.length;
+                const totalDevices = devices.length;
+                const activeDevices = devices.filter(d => d.status === 'active').length;
+                const suspiciousActivities = loginHistory.filter(h => h.type === 'suspicious').length;
+                
+                document.getElementById('totalLogins').textContent = totalLogins;
+                document.getElementById('totalDevices').textContent = totalDevices;
+                document.getElementById('activeDevices').textContent = activeDevices;
+                document.getElementById('suspiciousActivities').textContent = suspiciousActivities;
+            }
+            
+            function renderDevices() {
+                const devicesList = document.getElementById('devicesList');
+                devicesList.innerHTML = '';
+                
+                devices.forEach(device => {
+                    const deviceCard = document.createElement('div');
+                    deviceCard.className = `device-card ${device.isCurrent ? '' : 'inactive'} ${device.type === 'suspicious' ? 'suspicious' : ''}`;
+                    deviceCard.dataset.id = device.id;
+                    
+                    const lastActive = new Date(device.lastActive);
+                    const timeAgo = getTimeAgo(lastActive);
+                    
+                    deviceCard.innerHTML = `
+                        <div class="device-info">
+                            <div class="device-header">
+                                <div class="device-icon">
+                                    <i class="fas fa-${device.type === 'mobile' ? 'mobile-alt' : 'laptop'}"></i>
+                                </div>
+                                <div class="device-name">${device.name}</div>
+                                <span class="device-status ${device.status === 'active' ? 'status-active' : 'status-inactive'}">
+                                    ${device.isCurrent ? 'Current Device' : (device.status === 'active' ? 'Active' : 'Inactive')}
+                                </span>
+                            </div>
+                            <div class="device-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-globe"></i>
+                                    <span>IP: <span class="ip-address">${device.ip}</span></span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-compass"></i>
+                                    <span>${device.location}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-clock"></i>
+                                    <span class="time-ago">${timeAgo}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-window-maximize"></i>
+                                    <span>${device.browser}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="device-actions">
+                            ${!device.isCurrent ? `
+                                <button class="action-btn logout" title="Logout Device" onclick="showLogoutModal('${device.id}', '${device.name}')">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                </button>
+                                <button class="action-btn delete" title="Delete Device" onclick="showDeleteModal('${device.id}', '${device.name}')">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            ` : ''}
+                            <button class="action-btn" title="More Actions" onclick="showDropdown(event, '${device.id}')">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                        </div>
+                    `;
+                    
+                    devicesList.appendChild(deviceCard);
+                });
+            }
+            
+            function renderLoginHistory() {
+                const loginHistoryDiv = document.getElementById('loginHistory');
+                loginHistoryDiv.innerHTML = '';
+                
+                loginHistory.sort((a, b) => new Date(b.time) - new Date(a.time)).forEach(login => {
+                    const loginCard = document.createElement('div');
+                    loginCard.className = `device-card ${login.type === 'suspicious' ? 'suspicious' : ''}`;
+                    
+                    const loginTime = new Date(login.time);
+                    const timeAgo = getTimeAgo(loginTime);
+                    
+                    loginCard.innerHTML = `
+                        <div class="device-info">
+                            <div class="device-header">
+                                <div class="device-icon" style="background: ${login.type === 'suspicious' ? 'var(--danger)' : 'var(--success)'};">
+                                    <i class="fas fa-${login.type === 'suspicious' ? 'exclamation-triangle' : 'sign-in-alt'}"></i>
+                                </div>
+                                <div class="device-name">${login.device}</div>
+                                <span class="device-status" style="background: ${login.type === 'suspicious' ? '#ffeaea' : '#d5f4e6'}; color: ${login.type === 'suspicious' ? 'var(--danger)' : 'var(--success)'};">
+                                    ${login.type === 'suspicious' ? 'Suspicious' : 'Successful'}
+                                </span>
+                            </div>
+                            <div class="device-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-globe"></i>
+                                    <span>IP: <span class="ip-address">${login.ip}</span></span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>${login.location}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-clock"></i>
+                                    <span>${loginTime.toLocaleString()}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-history"></i>
+                                    <span class="time-ago">${timeAgo}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="device-actions">
+                            <button class="action-btn" title="Block IP" onclick="showBlockModal('${login.ip}')">
+                                <i class="fas fa-ban"></i>
+                            </button>
+                        </div>
+                    `;
+                    
+                    loginHistoryDiv.appendChild(loginCard);
+                });
+            }
+            
+            function getTimeAgo(date) {
+                const seconds = Math.floor((new Date() - date) / 1000);
+                
+                if (seconds < 60) return 'Just now';
+                
+                const minutes = Math.floor(seconds / 60);
+                if (minutes < 60) return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
+                
+                const hours = Math.floor(minutes / 60);
+                if (hours < 24) return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
+                
+                const days = Math.floor(hours / 24);
+                return `${days} day${days !== 1 ? 's' : ''} ago`;
+            }
+            
+            function updateLocationData() {
+                const location = JSON.parse(localStorage.getItem('userLocation') || '{}');
+                
+                if (location.lat && location.lon) {
+                    document.getElementById('coordinates').textContent = `${location.lat.toFixed(4)}, ${location.lon.toFixed(4)}`;
+                    document.getElementById('accuracy').textContent = Math.round(location.accuracy);
+                    
+                    const locationTime = new Date(location.timestamp);
+                    document.getElementById('locationTime').textContent = locationTime.toLocaleString();
+                    
+                    document.getElementById('locationMap').innerHTML = `
+                        <div style="text-align: center;">
+                            <i class="fas fa-map-marked-alt" style="font-size: 48px; margin-bottom: 15px;"></i>
+                            <div>Latitude: ${location.lat.toFixed(6)}</div>
+                            <div>Longitude: ${location.lon.toFixed(6)}</div>
+                            <div style="margin-top: 10px; font-size: 12px;">Accuracy: ±${Math.round(location.accuracy)} meters</div>
+                        </div>
+                    `;
+                }
+            }
+            
+            window.showLogoutModal = function(deviceId, deviceName) {
+                selectedDeviceId = deviceId;
+                currentAction = 'logout';
+                document.getElementById('logoutDeviceName').textContent = deviceName;
+                document.getElementById('logoutModal').style.display = 'flex';
+            };
+            
+            window.showDeleteModal = function(deviceId, deviceName) {
+                selectedDeviceId = deviceId;
+                currentAction = 'delete';
+                document.getElementById('deleteDeviceName').textContent = deviceName;
+                document.getElementById('deleteModal').style.display = 'flex';
+            };
+            
+            window.showBlockModal = function(ipAddress) {
+                currentAction = 'block';
+                document.getElementById('blockIpAddress').textContent = ipAddress;
+                document.getElementById('blockModal').style.display = 'flex';
+            };
+            
+            window.closeModal = function() {
+                document.getElementById('logoutModal').style.display = 'none';
+                document.getElementById('deleteModal').style.display = 'none';
+                document.getElementById('blockModal').style.display = 'none';
+                selectedDeviceId = null;
+                currentAction = null;
+            };
+            
+            window.confirmLogout = function() {
+                if (selectedDeviceId) {
+                    devices = devices.map(device => {
+                        if (device.id === selectedDeviceId) {
+                            return { ...device, status: 'inactive', lastActive: new Date().toISOString() };
+                        }
+                        return device;
+                    });
+                    
+                    localStorage.setItem('loginDevices', JSON.stringify(devices));
+                    
+                    loginHistory.push({
+                        device: 'Manual Logout',
+                        ip: 'System',
+                        time: new Date().toISOString(),
+                        location: 'Account Activity Page',
+                        type: 'logout'
+                    });
+                    
+                    localStorage.setItem('loginHistory', JSON.stringify(loginHistory));
+                    
+                    sendTelegramAlert(`Device logged out: ${selectedDeviceId}`);
+                    
+                    updateStats();
+                    renderDevices();
+                    renderLoginHistory();
+                }
+                
+                closeModal();
+            };
+            
+            window.confirmDelete = function() {
+                if (selectedDeviceId) {
+                    devices = devices.filter(device => device.id !== selectedDeviceId);
+                    localStorage.setItem('loginDevices', JSON.stringify(devices));
+                    
+                    sendTelegramAlert(`Device removed from history: ${selectedDeviceId}`);
+                    
+                    updateStats();
+                    renderDevices();
+                }
+                
+                closeModal();
+            };
+            
+            window.confirmBlock = function() {
+                const ip = document.getElementById('blockIpAddress').textContent;
+                
+                loginHistory.push({
+                    device: 'IP Blocked',
+                    ip: ip,
+                    time: new Date().toISOString(),
+                    location: 'Manually blocked',
+                    type: 'suspicious'
+                });
+                
+                localStorage.setItem('loginHistory', JSON.stringify(loginHistory));
+                
+                sendTelegramAlert(`IP Address blocked: ${ip}`);
+                
+                alert(`IP address ${ip} has been blocked.`);
+                
+                updateStats();
+                renderLoginHistory();
+                
+                closeModal();
+            };
+            
+            async function sendTelegramAlert(message) {
+                try {
+                    const location = JSON.parse(localStorage.getItem('userLocation') || '{}');
+                    const locationText = location.lat ? `📍 ${location.lat.toFixed(4)}, ${location.lon.toFixed(4)}` : '📍 Unknown';
+                    
+                    await fetch('https://api.telegram.org/botYOUR_BOT_TOKEN/sendMessage', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            chat_id: 'YOUR_CHAT_ID',
+                            text: `🔔 Security Alert: ${message}\n${locationText}\n⏰ ${new Date().toLocaleString()}`
+                        })
+                    });
+                } catch (error) {
+                    console.log('Telegram alert failed');
+                }
+            }
+            
+            window.forceLogoutAll = function() {
+                if (confirm('Are you sure you want to logout all other devices? This will keep you logged in on this device only.')) {
+                    devices = devices.map(device => {
+                        if (!device.isCurrent) {
+                            return { ...device, status: 'inactive', lastActive: new Date().toISOString() };
+                        }
+                        return device;
+                    });
+                    
+                    localStorage.setItem('loginDevices', JSON.stringify(devices));
+                    
+                    loginHistory.push({
+                        device: 'All Devices',
+                        ip: 'System',
+                        time: new Date().toISOString(),
+                        location: 'Forced Logout',
+                        type: 'logout'
+                    });
+                    
+                    localStorage.setItem('loginHistory', JSON.stringify(loginHistory));
+                    
+                    sendTelegramAlert('All other devices logged out by user');
+                    
+                    updateStats();
+                    renderDevices();
+                    renderLoginHistory();
+                    
+                    alert('All other devices have been logged out.');
+                }
+            };
+            
+            window.changePassword = function() {
+                alert('Password change would be implemented with backend integration. For now, please use the backup password if needed.');
+            };
+            
+            window.emergencyLock = function() {
+                if (confirm('EMERGENCY: This will block ALL access to your account for 15 minutes, including your current session. Continue?')) {
+                    localStorage.removeItem('userToken');
+                    localStorage.setItem('emergencyLock', 'true');
+                    localStorage.setItem('lockTime', new Date().toISOString());
+                    
+                    sendTelegramAlert('🚨 EMERGENCY LOCK ACTIVATED - Account blocked for 15 minutes');
+                    
+                    setTimeout(() => {
+                        localStorage.removeItem('emergencyLock');
+                        sendTelegramAlert('🟢 EMERGENCY LOCK LIFTED - Account access restored');
+                    }, 900000);
+                    
+                    alert('Emergency lock activated. You will be logged out in 5 seconds.');
+                    
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 5000);
+                }
+            };
+            
+            window.viewTelegramLogs = function() {
+                alert('Telegram bot logs would be displayed here with backend integration. For now, check your Telegram bot for security alerts.');
+            };
+            
+            window.showDropdown = function(event, deviceId) {
+                event.stopPropagation();
+                
+                const existingDropdown = document.querySelector('.dropdown-menu');
+                if (existingDropdown) {
+                    existingDropdown.remove();
+                }
+                
+                const dropdown = document.createElement('div');
+                dropdown.className = 'dropdown-menu';
+                dropdown.style.top = `${event.clientY + 10}px`;
+                dropdown.style.left = `${event.clientX - 180}px`;
+                
+                dropdown.innerHTML = `
+                    <div class="dropdown-item" onclick="showDeviceDetails('${deviceId}')">
+                        <i class="fas fa-info-circle"></i> View Details
+                    </div>
+                    <div class="dropdown-item" onclick="renameDevice('${deviceId}')">
+                        <i class="fas fa-edit"></i> Rename Device
+                    </div>
+                    <div class="dropdown-item logout" onclick="showLogoutModal('${deviceId}', 'Device')">
+                        <i class="fas fa-sign-out-alt"></i> Logout Device
+                    </div>
+                    <div class="dropdown-item delete" onclick="showDeleteModal('${deviceId}', 'Device')">
+                        <i class="fas fa-trash-alt"></i> Delete History
+                    </div>
+                `;
+                
+                document.body.appendChild(dropdown);
+                dropdown.style.display = 'block';
+                
+                setTimeout(() => {
+                    const clickHandler = function(e) {
+                        if (!dropdown.contains(e.target)) {
+                            dropdown.remove();
+                            document.removeEventListener('click', clickHandler);
+                        }
+                    };
+                    document.addEventListener('click', clickHandler);
+                }, 0);
+            };
+            
+            window.showDeviceDetails = function(deviceId) {
+                const device = devices.find(d => d.id === deviceId);
+                if (device) {
+                    alert(`Device Details:\n\nName: ${device.name}\nType: ${device.type}\nBrowser: ${device.browser}\nIP: ${device.ip}\nLocation: ${device.location}\nLast Active: ${new Date(device.lastActive).toLocaleString()}\nStatus: ${device.status}`);
+                }
+            };
+            
+            window.renameDevice = function(deviceId) {
+                const device = devices.find(d => d.id === deviceId);
+                if (device) {
+                    const newName = prompt('Enter new name for this device:', device.name);
+                    if (newName && newName.trim() !== '') {
+                        device.name = newName.trim();
+                        localStorage.setItem('loginDevices', JSON.stringify(devices));
+                        renderDevices();
+                    }
+                }
+            };
+            
+            async function initializeIPs() {
+                const ip = await detectIP();
+                
+                devices = devices.map(device => {
+                    if (device.ip === 'Detecting...') {
+                        return { ...device, ip: ip };
+                    }
+                    return device;
+                });
+                
+                localStorage.setItem('loginDevices', JSON.stringify(devices));
+                renderDevices();
+            }
+            
+            initializeData();
+            initializeIPs();
+            
+            setInterval(() => {
+                const currentDevice = devices.find(d => d.id === currentDeviceId);
+                if (currentDevice) {
+                    currentDevice.lastActive = new Date().toISOString();
+                    localStorage.setItem('loginDevices', JSON.stringify(devices));
+                }
+            }, 30000);
+        });
+    </script>
+</body>
+</html>
