@@ -11,8 +11,6 @@ services:
         sync: false
       - key: TELEGRAM_BOT_TOKEN
         sync: false
-      - key: BACKUP2_URL
-        value: http://localhost:3001
     healthCheckPath: /api/health
     autoDeploy: true
 
