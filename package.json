@@ -1,0 +1,40 @@
+{
+  "name": "private-diary-platform",
+  "version": "1.0.0",
+  "description": "A secure personal diary platform with military-grade security and Telegram integration",
+  "main": "backend1.js",
+  "scripts": {
+    "start": "node backend1.js",
+    "start-backup": "node backend2.js",
+    "dev": "nodemon backend1.js",
+    "dev-backup": "nodemon backend2.js",
+    "test": "echo \"No tests specified\" && exit 0",
+    "install-all": "npm install",
+    "setup": "npm install && echo 'Setup complete'"
+  },
+  "keywords": [
+    "diary",
+    "journal",
+    "security",
+    "privacy",
+    "telegram-bot"
+  ],
+  "author": "Ximanta",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^7.5.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "axios": "^1.5.0",
+    "node-cron": "^3.0.2",
+    "helmet": "^7.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
